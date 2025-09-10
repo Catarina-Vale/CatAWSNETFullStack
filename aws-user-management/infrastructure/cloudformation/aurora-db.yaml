@@ -1,0 +1,70 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: CloudFormation template for setting up an AuroraDB instance for user management.
+
+Resources:
+  UserDatabase:
+    Type: AWS::RDS::DBCluster
+    Properties:
+      Engine: aurora
+      MasterUsername: !Ref DBUsername
+      MasterUserPassword: !Ref DBPassword
+      DBClusterIdentifier: user-management-cluster
+      DBSubnetGroupName: !Ref DBSubnetGroup
+      VpcSecurityGroupIds:
+        - !Ref DBSecurityGroup
+      BackupRetentionPeriod: 7
+      EngineMode: provisioned
+      ScalingConfiguration:
+        AutoPause: true
+        MaxCapacity: 2
+        MinCapacity: 1
+        SecondsUntilAutoPause: 300
+
+  UserDatabaseInstance:
+    Type: AWS::RDS::DBInstance
+    Properties:
+      DBInstanceClass: db.t3.medium
+      Engine: aurora
+      DBClusterIdentifier: !Ref UserDatabase
+      DBInstanceIdentifier: user-management-instance
+
+  DBSubnetGroup:
+    Type: AWS::RDS::DBSubnetGroup
+    Properties:
+      DBSubnetGroupDescription: Subnet group for AuroraDB
+      SubnetIds:
+        - !Ref Subnet1
+        - !Ref Subnet2
+
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for AuroraDB
+      VpcId: !Ref VPCId
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 3306
+          ToPort: 3306
+          CidrIp: 0.0.0.0/0
+
+Parameters:
+  DBUsername:
+    Type: String
+    Description: The database admin account username.
+  
+  DBPassword:
+    Type: String
+    Description: The database admin account password.
+    NoEcho: true
+
+  VPCId:
+    Type: AWS::EC2::VPC::Id
+    Description: The VPC where the database will be deployed.
+
+  Subnet1:
+    Type: AWS::EC2::Subnet::Id
+    Description: The first subnet for the database.
+
+  Subnet2:
+    Type: AWS::EC2::Subnet::Id
+    Description: The second subnet for the database.

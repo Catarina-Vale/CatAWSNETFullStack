@@ -1,0 +1,18 @@
+Resources:
+  UserProfilePicturesBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      BucketName: !Sub "user-profile-pictures-${AWS::AccountId}-${AWS::Region}"
+      VersioningConfiguration:
+        Status: Enabled
+      LifecycleConfiguration:
+        Rules:
+          - Id: "ExpireOldPictures"
+            Status: Enabled
+            ExpirationInDays: 365
+      AccessControl: Private
+
+Outputs:
+  UserProfilePicturesBucketName:
+    Description: "Name of the S3 bucket for user profile pictures"
+    Value: !Ref UserProfilePicturesBucket
