@@ -4,10 +4,13 @@ using UserManagementService.Data;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using System.Text;
+using UserManagementService.DTOs;
+using System;
+using UserManagementService.Services.Interfaces;
 
 namespace UserManagementService.Services
 {
-    public class AuthService
+    public class AuthService : IAuthService
     {
         private readonly AuroraDbContext _context;
 
@@ -16,15 +19,15 @@ namespace UserManagementService.Services
             _context = context;
         }
 
-        public async Task<User> RegisterAsync(string handle, string password, string displayName, string bio)
+        public async Task<User> RegisterAsync(RegisterRequest register)
         {
-            var hashedPassword = HashPassword(password);
-            var user = new User
+            var hashedPassword = HashPassword(register.Password);
+            var user = new UserManagementService.Models.User
             {
-                Handle = handle,
+                Handle = register.Handle,
                 PasswordHash = hashedPassword,
-                DisplayName = displayName,
-                Bio = bio
+                DisplayName = register.DisplayName,
+                Bio = register.Bio
             };
 
             _context.Users.Add(user);
@@ -32,10 +35,10 @@ namespace UserManagementService.Services
             return user;
         }
 
-        public async Task<User> LoginAsync(string handle, string password)
+        public async Task<User> LoginAsync(LoginRequest request)
         {
-            var user = await _context.Users.SingleOrDefaultAsync(u => u.Handle == handle);
-            if (user == null || !VerifyPassword(password, user.PasswordHash))
+            var user = await _context.Users.SingleOrDefaultAsync(u => u.Handle == request.Username);
+            if (user == null || !VerifyPassword(request.Password, user.PasswordHash))
             {
                 return null;
             }

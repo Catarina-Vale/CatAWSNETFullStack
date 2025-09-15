@@ -1,13 +1,11 @@
-
-namespace UserManagementService.Models
+namespace UserManagementService.DTOs
 {
-    public class User
+    public class RegisterRequest
     {
-        public int Id { get; set; }
         public string Handle { get; set; }
         public string DisplayName { get; set; }
         public string Bio { get; set; }
         public string ProfilePictureUrl { get; set; }
-        public string PasswordHash { get; set; }
+        public string Password { get; set; }
     }
 }

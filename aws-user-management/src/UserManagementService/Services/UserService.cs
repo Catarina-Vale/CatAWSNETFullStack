@@ -1,9 +1,12 @@
 using System.Threading.Tasks;
+using UserManagementService.Data;
+using UserManagementService.DTOs;
 using UserManagementService.Models;
+using UserManagementService.Services.Interfaces;
 
 namespace UserManagementService.Services
 {
-    public class UserService
+    public class UserService : IUserService
     {
         private readonly AuroraDbContext _context;
 
@@ -17,14 +20,14 @@ namespace UserManagementService.Services
             return await _context.Users.FindAsync(userId);
         }
 
-        public async Task<bool> UpdateUserProfileAsync(string userId, string bio, string displayName, string profilePictureUrl)
+        public async Task<bool> UpdateUserProfileAsync(UpdateProfileRequest request)
         {
-            var user = await GetUserByIdAsync(userId);
+            var user = await GetUserByIdAsync(request.UserId);
             if (user == null) return false;
 
-            user.Bio = bio;
-            user.DisplayName = displayName;
-            user.ProfilePictureUrl = profilePictureUrl;
+            user.Bio = request.Bio;
+            user.DisplayName = request.DisplayName;
+            user.ProfilePictureUrl = request.ProfilePictureUrl;
 
             _context.Users.Update(user);
             await _context.SaveChangesAsync();

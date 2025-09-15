@@ -2,10 +2,11 @@ using Amazon.S3;
 using Amazon.S3.Model;
 using System.IO;
 using System.Threading.Tasks;
+using UserManagementService.Services.Interfaces;
 
 namespace UserManagementService.Services
 {
-    public class S3Service
+    public class S3Service : IS3Service
     {
         private readonly IAmazonS3 _s3Client;
         private readonly string _bucketName;

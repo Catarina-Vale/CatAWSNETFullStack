@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using UserManagementService.Models;
 using UserManagementService.Services;
-using Shared.DTOs;
+using UserManagementService.DTOs;
+using UserManagementService.Services.Interfaces;
 
 namespace UserManagementService.Controllers
 {
@@ -10,9 +11,9 @@ namespace UserManagementService.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly AuthService _authService;
+        private readonly IAuthService _authService;
 
-        public AuthController(AuthService authService)
+        public AuthController(IAuthService authService)
         {
             _authService = authService;
         }
@@ -21,7 +22,7 @@ namespace UserManagementService.Controllers
         public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             var result = await _authService.RegisterAsync(request);
-            if (result.Success)
+            if (result != null)
             {
                 return Ok(result);
             }
@@ -32,7 +33,7 @@ namespace UserManagementService.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequest request)
         {
             var result = await _authService.LoginAsync(request);
-            if (result.Success)
+            if (result != null)
             {
                 return Ok(result);
             }

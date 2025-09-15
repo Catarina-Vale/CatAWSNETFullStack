@@ -2,7 +2,8 @@ using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using UserManagementService.Models;
 using UserManagementService.Services;
-using Shared.DTOs;
+using UserManagementService.DTOs;
+using UserManagementService.Services.Interfaces;
 
 namespace UserManagementService.Controllers
 {
@@ -10,9 +11,9 @@ namespace UserManagementService.Controllers
     [Route("api/[controller]")]
     public class UserController : ControllerBase
     {
-        private readonly UserService _userService;
+        private readonly IUserService _userService;
 
-        public UserController(UserService userService)
+        public UserController(IUserService userService)
         {
             _userService = userService;
         }
@@ -21,18 +22,21 @@ namespace UserManagementService.Controllers
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileRequest request)
         {
             var user = await _userService.UpdateUserProfileAsync(request);
+            if (!user)
+            {
+                return NotFound();
+            }
+            return Ok(user);
+        }
+        [HttpGet("user")]
+        public async Task<IActionResult> GetUser([FromQuery] string handle)
+        {
+            var user = await _userService.GetUserByIdAsync(handle);
             if (user == null)
             {
                 return NotFound();
             }
-            return Ok(new UserResponse
-            {
-                Id = user.Id,
-                Handle = user.Handle,
-                DisplayName = user.DisplayName,
-                Bio = user.Bio,
-                ProfilePictureUrl = user.ProfilePictureUrl
-            });
+            return Ok(user);
         }
     }
 }
