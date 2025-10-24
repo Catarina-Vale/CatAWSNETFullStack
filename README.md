@@ -1,6 +1,11 @@
-# CatAWSNETFullStack
-This is a MVP for a SaaS Fullstack project in .NET, working with the AWS enviroment and Frontend in React
+## Domain Driven Design (DDD) Approach
 
-The Service is a social media MVP containing at least, creation of account, with bio and profile picture
+This project follows Domain Driven Design (DDD) principles:
 
-Users will be able to post images and text, reply other texts and repost other posts
+- **Bounded Contexts**: The backend is organized around the User Management domain.
+- **Entities & Value Objects**: Business logic is encapsulated in the `Models` folder.
+- **Repositories**: Data access logic is separated in the `Data` folder.
+- **Domain Services**: Business operations are implemented in the `Services` folder.
+- **DTOs**: Data Transfer Objects are used for communication between layers.
+
+This structure ensures a clear separation of concerns and aligns the codebase with business concepts.
